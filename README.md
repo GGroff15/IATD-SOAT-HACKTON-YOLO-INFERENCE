@@ -22,13 +22,26 @@ pip install uv
 uv sync
 ```
 
-2. Run the current scaffold entry point:
+2. Create your local environment file from the example and adjust values if needed:
+
+```bash
+cp .env.example .env
+```
+
+YOLO runtime keys:
+
+- `YOLO_MODEL` (default: `yolov8n.pt`)
+- `YOLO_DEVICE` (default: `cpu`)
+- `YOLO_CONFIDENCE` (default: `0.25`)
+- `YOLO_IOU` (default: `0.70`)
+
+3. Run the current scaffold entry point:
 
 ```bash
 uv run python main.py
 ```
 
-3. Run the API server:
+4. Run the API server:
 
 ```bash
 uv run uvicorn main:app --reload
