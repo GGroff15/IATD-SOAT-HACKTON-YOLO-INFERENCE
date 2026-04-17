@@ -31,9 +31,11 @@ cp .env.example .env
 YOLO runtime keys:
 
 - `YOLO_MODEL` (default: `yolov8n.pt`)
-- `YOLO_DEVICE` (default: `cpu`)
+- `YOLO_DEVICE` (default: `cpu`; examples: `cpu`, `gpu`, `0`, `0,1`, `cuda`, `cuda:0`)
 - `YOLO_CONFIDENCE` (default: `0.25`)
 - `YOLO_IOU` (default: `0.70`)
+
+If `YOLO_DEVICE` is set to `gpu`/`cuda*` on a machine without CUDA, the API automatically falls back to `cpu`.
 
 3. Run the current scaffold entry point:
 
