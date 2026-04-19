@@ -18,6 +18,8 @@ if [ ! -f "${MODEL_PATH}" ]; then
 		echo "ERROR: Downloaded model file is empty: '${MODEL_PATH}'." >&2
 		exit 1
 	fi
+
+	echo "YOLO model downloaded successfully to ${MODEL_PATH}."
 else
 	echo "Using existing YOLO model at ${MODEL_PATH}."
 fi

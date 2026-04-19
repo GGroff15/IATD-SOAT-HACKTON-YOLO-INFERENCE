@@ -26,7 +26,14 @@ ARG YOLO_MODEL_PATH=models/yolov8_component_arrow.pt
 ENV YOLO_MODEL=${YOLO_MODEL_PATH}
 
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends curl \
+    && apt-get install --yes --no-install-recommends \
+        curl \
+        libgl1 \
+        libglib2.0-0 \
+        libsm6 \
+        libxext6 \
+        libxrender1 \
+        libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/.venv /app/.venv

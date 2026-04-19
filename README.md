@@ -77,7 +77,14 @@ Runtime environment keys for model download:
 1. Build the image (bash):
 
 ```bash
-docker build -t yolo-inference-api:local .
+docker build \
+	--build-arg YOLO_MODEL_S3_BUCKET=<your-bucket> \
+	--build-arg YOLO_MODEL_S3_KEY=<path/in/bucket/model.pt> \
+	--build-arg AWS_DEFAULT_REGION=<aws-region> \
+	--build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+	--build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+	--build-arg AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+	-t yolo-inference-api:local .
 ```
 
 2. Build the image (PowerShell):
@@ -96,10 +103,17 @@ docker run --rm -p 8000:8000 --env-file .env \
 
 ## Run with Podman
 
-1. Build the image:
+1. Build the image (same build args as Docker):
 
 ```bash
-podman build -t yolo-inference-api:local .
+podman build \
+	--build-arg YOLO_MODEL_S3_BUCKET=<your-bucket> \
+	--build-arg YOLO_MODEL_S3_KEY=<path/in/bucket/model.pt> \
+	--build-arg AWS_DEFAULT_REGION=<aws-region> \
+	--build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+	--build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+	--build-arg AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+	-t yolo-inference-api:local .
 ```
 
 2. Run the container:
