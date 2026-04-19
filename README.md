@@ -16,7 +16,19 @@ pip install uv
 
 ## Run as a Python Project with uv
 
-1. Sync dependencies:
+1. Create an environment file if needed:
+
+```bash
+cp .env.example .env
+```
+
+For PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+2. Sync dependencies:
 
 ```bash
 uv sync
@@ -44,6 +56,7 @@ uv run python main.py
 ```
 
 4. Run the API server:
+4. Run the API server:
 
 ```bash
 uv run uvicorn main:app --reload
@@ -53,16 +66,32 @@ When the API is running, it is available at `http://127.0.0.1:8000` and interact
 
 ## Run with Docker
 
-1. Build the image:
+This workflow builds a single image from `Dockerfile`.  
+At container startup, the entrypoint downloads the YOLO model from S3 **only if** the file configured in `YOLO_MODEL` does not already exist.
+
+Runtime environment keys for model download:
+
+- `YOLO_MODEL` (optional, default: `models/yolov8_component_arrow.pt`)
+- `YOLO_MODEL_S3_OBJECT_URL` (required when `YOLO_MODEL` file is not already present in the container)
+
+1. Build the image (bash):
 
 ```bash
 docker build -t yolo-inference-api:local .
 ```
 
-2. Run the container:
+2. Build the image (PowerShell):
+
+```powershell
+docker build -t yolo-inference-api:local .
+```
+
+3. Run the container:
 
 ```bash
-docker run --rm -p 8000:8000 --env-file .env yolo-inference-api:local
+docker run --rm -p 8000:8000 --env-file .env \
+	-e YOLO_MODEL_S3_OBJECT_URL=<https://your-bucket-or-s3-url/model.pt> \
+	yolo-inference-api:local
 ```
 
 ## Run with Podman
@@ -76,7 +105,9 @@ podman build -t yolo-inference-api:local .
 2. Run the container:
 
 ```bash
-podman run --rm -p 8000:8000 --env-file .env yolo-inference-api:local
+podman run --rm -p 8000:8000 --env-file .env \
+	-e YOLO_MODEL_S3_OBJECT_URL=<https://your-bucket-or-s3-url/model.pt> \
+	yolo-inference-api:local
 ```
 
 ## Development Commands
