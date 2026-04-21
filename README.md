@@ -4,9 +4,12 @@ FastAPI-based YOLOv8 inference API project.
 
 ## Prerequisites
 
-- Python 3.12+
-- uv
-- Docker or Podman
+- **Docker workflow (required to run container):**
+  - Docker Desktop or Docker Engine
+  - Network access to `YOLO_MODEL_S3_OBJECT_URL` when the model file does not already exist in the container
+- **Local Python workflow (optional, for running outside Docker):**
+  - Python 3.12+
+  - uv
 
 Install uv if needed:
 
@@ -16,7 +19,7 @@ pip install uv
 
 ## Run as a Python Project with uv
 
-1. Create an environment file if needed:
+1. Create your local environment file:
 
 ```bash
 cp .env.example .env
@@ -32,12 +35,6 @@ Copy-Item .env.example .env
 
 ```bash
 uv sync
-```
-
-2. Create your local environment file from the example and adjust values if needed:
-
-```bash
-cp .env.example .env
 ```
 
 YOLO runtime keys:
@@ -56,7 +53,6 @@ uv run python main.py
 ```
 
 4. Run the API server:
-4. Run the API server:
 
 ```bash
 uv run uvicorn main:app --reload
@@ -66,40 +62,40 @@ When the API is running, it is available at `http://127.0.0.1:8000` and interact
 
 ## Run with Docker
 
-This workflow builds a single image from `Dockerfile`.  
-At container startup, the entrypoint downloads the YOLO model from S3 **only if** the file configured in `YOLO_MODEL` does not already exist.
+The Docker image installs project dependencies from `pyproject.toml` during build (`uv sync --frozen --no-dev --no-install-project`), so you do not need local Python packages inside the container.
+At startup, the entrypoint downloads the YOLO model **only if** the file configured in `YOLO_MODEL` does not already exist.
 
-Runtime environment keys for model download:
-
-- `YOLO_MODEL` (optional, default: `models/yolov8_component_arrow.pt`)
-- `YOLO_MODEL_S3_OBJECT_URL` (required when `YOLO_MODEL` file is not already present in the container)
-
-1. Build the image (bash):
+1. Create a Docker environment file from the example:
 
 ```bash
-docker build \
-	--build-arg YOLO_MODEL_S3_BUCKET=<your-bucket> \
-	--build-arg YOLO_MODEL_S3_KEY=<path/in/bucket/model.pt> \
-	--build-arg AWS_DEFAULT_REGION=<aws-region> \
-	--build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-	--build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-	--build-arg AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
-	-t yolo-inference-api:local .
+cp .docker.env.example .docker.env
 ```
 
-2. Build the image (PowerShell):
+For PowerShell:
 
 ```powershell
+Copy-Item .docker.env.example .docker.env
+```
+
+2. Configure `.docker.env`:
+
+- `YOLO_MODEL` (optional, default: `models/yolov8_component_arrow.pt`)
+- `YOLO_MODEL_S3_OBJECT_URL` (**required** when the `YOLO_MODEL` file is not present in the container)
+- `YOLO_DEVICE`, `YOLO_CONFIDENCE`, `YOLO_IOU` (optional inference settings)
+
+3. Build the image:
+
+```bash
 docker build -t yolo-inference-api:local .
 ```
 
-3. Run the container:
+4. Run the container:
 
 ```bash
-docker run --rm -p 8000:8000 --env-file .env \
-	-e YOLO_MODEL_S3_OBJECT_URL=<https://your-bucket-or-s3-url/model.pt> \
-	yolo-inference-api:local
+docker run --rm -p 8000:8000 --env-file .docker.env yolo-inference-api:local
 ```
+
+When the API is running, it is available at `http://127.0.0.1:8000` and interactive docs are at `http://127.0.0.1:8000/docs`.
 
 ## Run with Podman
 
@@ -119,7 +115,7 @@ podman build \
 2. Run the container:
 
 ```bash
-podman run --rm -p 8000:8000 --env-file .env \
+podman run --rm -p 8000:8000 --env-file .docker.env \
 	-e YOLO_MODEL_S3_OBJECT_URL=<https://your-bucket-or-s3-url/model.pt> \
 	yolo-inference-api:local
 ```
