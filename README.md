@@ -31,7 +31,9 @@ For PowerShell:
 Copy-Item .env.example .env
 ```
 
-2. Sync dependencies:
+2. Store your YOLO model under the `/models` directory (as shown in `.env.example`).
+
+3. Sync dependencies:
 
 ```bash
 uv sync
@@ -46,13 +48,13 @@ YOLO runtime keys:
 
 If `YOLO_DEVICE` is set to `gpu`/`cuda*` on a machine without CUDA, the API automatically falls back to `cpu`.
 
-3. Run the current scaffold entry point:
+4. Run the current scaffold entry point:
 
 ```bash
 uv run python main.py
 ```
 
-4. Run the API server:
+5. Run the API server:
 
 ```bash
 uv run uvicorn main:app --reload
