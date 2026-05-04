@@ -99,6 +99,42 @@ docker run --rm -p 8000:8000 --env-file .docker.env yolo-inference-api:local
 
 When the API is running, it is available at `http://127.0.0.1:8000` and interactive docs are at `http://127.0.0.1:8000/docs`.
 
+## Run with Docker Compose
+
+The Compose configuration uses the external Docker network `soat-net` and mounts `./models` into the container to persist downloaded models.
+
+1. Create a Docker environment file from the example:
+
+```bash
+cp .docker.env.example .docker.env
+```
+
+For PowerShell:
+
+```powershell
+Copy-Item .docker.env.example .docker.env
+```
+
+2. Create the external network (one-time setup):
+
+```bash
+docker network create soat-net
+```
+
+3. Build and start the service:
+
+```bash
+docker compose up --build
+```
+
+4. Stop the service:
+
+```bash
+docker compose down
+```
+
+When the API is running, it is available at `http://127.0.0.1:8000` and interactive docs are at `http://127.0.0.1:8000/docs`.
+
 ## Run with Podman
 
 1. Build the image (same build args as Docker):
