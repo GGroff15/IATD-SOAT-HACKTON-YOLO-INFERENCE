@@ -12,6 +12,7 @@ from yolo_inference_api.application.image_inference_use_case import (
 	ImageInferenceUseCase,
 )
 from yolo_inference_api.infrastructure.settings import YoloInferenceSettings
+from yolo_inference_api.infrastructure.observability import configure_observability
 
 
 def create_app() -> FastAPI:
@@ -35,6 +36,7 @@ def create_app() -> FastAPI:
 	application = FastAPI(title="YOLO Inference API", lifespan=lifespan)
 	application.include_router(infer_router)
 	application.dependency_overrides[get_inference_use_case] = get_inference_use_case_dependency
+	configure_observability(application)
 	return application
 
 

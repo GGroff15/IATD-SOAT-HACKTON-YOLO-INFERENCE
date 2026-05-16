@@ -4,9 +4,17 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8081:8000"
     env_file:
       - .docker.env
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      OTEL_SERVICE_NAME: yolo-inference-api
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=local,service.namespace=soat
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_LOGS_EXPORTER: otlp
     volumes:
       - ./models:/app/models
     networks:
