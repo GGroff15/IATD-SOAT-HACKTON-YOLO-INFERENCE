@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "python .github/hooks/scripts/enforce_uv_over_pip.py",
+        "windows": "python .github\\hooks\\scripts\\enforce_uv_over_pip.py",
+        "timeout": 10
+      }
+    ]
+  }
+}

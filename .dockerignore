@@ -1,0 +1,22 @@
+# Git metadata
+.git
+.gitignore
+
+# Python artifacts
+__pycache__/
+*.py[oc]
+.pytest_cache/
+.venv/
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Tests and editor files
+tests/
+.vscode/
