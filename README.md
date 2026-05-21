@@ -249,15 +249,91 @@ When enabled, the application configures:
 
 Docker Compose sets OTLP environment variables for a collector reachable as `otel-collector` on the `soat-net` network.
 
-## Development
+## Running Tests
 
-Run the test suite:
+Install development dependencies:
+
+```bash
+uv sync --dev
+```
+
+Copy the environment file before running tests that read settings:
+
+```bash
+cp .env.example .env
+```
+
+### Unit tests
+
+Run the full unit test suite:
+
+```bash
+uv run pytest tests/unit/
+```
+
+Run with coverage report (minimum required: 80%):
+
+```bash
+uv run pytest tests/unit/ --cov=yolo_inference_api --cov-report=term-missing --cov-fail-under=80
+```
+
+The unit tests cover: settings validation, YOLO adapter mapping, inference service logic, controller contract, and use case protocol. They do not load any model file.
+
+### Integration tests
+
+Integration tests load the actual YOLO model and require the model file to be present at the path configured in `YOLO_MODEL`:
+
+```bash
+uv run pytest tests/integration/
+```
+
+Integration tests are not executed in the CI pipeline because they require the model file which is not committed to the repository.
+
+### All tests
 
 ```bash
 uv run pytest
 ```
 
-The test suite currently covers the endpoint contract, invalid image handling, use case protocol, environment settings, and YOLO adapter mapping.
+### Coverage only
+
+```bash
+uv run pytest --cov=yolo_inference_api --cov-report=html
+```
+
+The HTML report is written to `htmlcov/index.html`.
+
+## CI/CD
+
+The repository uses GitHub Actions with a workflow at `.github/workflows/ci.yml` that runs automatically on every pull request targeting `main`.
+
+The pipeline has two sequential jobs:
+
+| Job | What it does |
+| --- | --- |
+| `run_tests` | Installs dependencies with `uv sync --dev`, copies `.env.example` to `.env`, runs `pytest tests/unit/` with 80% coverage enforcement. Fails the build if coverage drops below 80%. |
+| `build_and_push` | Builds the Docker image and pushes `{DOCKER_USERNAME}/soat-yolo-inference:latest` to Docker Hub. Runs only after `run_tests` succeeds. |
+
+Required GitHub secrets: `DOCKER_USERNAME` and `DOCKER_PASSWORD`.
+
+> Integration tests are excluded from the pipeline because they require the YOLO model file which is not bundled in the CI environment.
+
+## API Testing
+
+There is no Postman collection in this repository. Use the auto-generated interactive docs instead:
+
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
+- Raw schema: `http://127.0.0.1:8000/openapi.json`
+
+Quick curl test after the service is running:
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/infer \
+  -F "file=@path/to/image.png" | python3 -m json.tool
+```
+
+## Development
 
 Add dependencies:
 
@@ -269,24 +345,4 @@ Add development dependencies:
 
 ```bash
 uv add --dev <package>
-```
-
-Build package artifacts:
-
-```bash
-uv build
-```
-
-## Verification
-
-The documented test command was verified with:
-
-```bash
-uv run pytest
-```
-
-Observed result:
-
-```text
-16 passed in 3.80s
 ```
