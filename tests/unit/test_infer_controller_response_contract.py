@@ -1,5 +1,12 @@
-from yolo_inference_api.adapters.inbound.infer_controller import serialize_detection
+import pytest
+
+from yolo_inference_api.adapters.inbound.infer_controller import _validate_image_bytes, serialize_detection
 from yolo_inference_api.domain.inference_detection import InferenceDetection
+
+
+def test_validate_image_bytes_raises_when_empty():
+    with pytest.raises(ValueError, match="Missing image bytes"):
+        _validate_image_bytes(b"")
 
 
 def test_serialize_detection_returns_label_and_bbox_edges_only():
