@@ -346,3 +346,23 @@ Add development dependencies:
 ```bash
 uv add --dev <package>
 ```
+
+## Equipe
+
+### Integrantes IADT
+
+| Nome | RM |
+|---|---|
+| Angelo Rossi | RM365902 |
+| Carlos Eduardo | RM365213 |
+| Felipe Goiabeira | RM365753 |
+| Guilherme Groff | RM365281 |
+| Rafael Lua | RM366254 |
+
+### Integrantes SOAT
+
+| Nome | RM |
+|---|---|
+| Felipe Alves de Oliveira | RM365154 |
+| Nicolas Henrique Correa Martins | RM365746 |
+| William Francisco Leite | RM365973 |
